@@ -93,7 +93,7 @@ def person_blocker(args):
     mask_color = string_to_rgb_triplet(args.color)
     image_masked = image.copy()
     noisy_color = create_noisy_color(image, mask_color)
-    image_masked[mask_selected == 1] = noisy_color[mask_selected == 1]
+    image_masked[mask_selected > 0] = noisy_color[mask_selected > 0]
 
     imageio.imwrite('person_blocked.png', image_masked)
 
@@ -106,7 +106,7 @@ def person_blocker(args):
     for _ in range(num_images - 1):
         new_image = image.copy()
         noisy_color = create_noisy_color(image, mask_color)
-        new_image[mask_selected == 1] = noisy_color[mask_selected == 1]
+        new_image[mask_selected > 0] = noisy_color[mask_selected > 0]
         images.append(new_image)
 
     imageio.mimsave('person_blocked.gif', images, fps=30., subrectangles=True)
