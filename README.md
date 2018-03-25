@@ -19,7 +19,7 @@ python3 person_blocker.py -i images/img2.jpg -c '#c0392b' -o 'horse'
 ```
 
 ```shell
-python3 person_blocker.py -i images/img3.jpg -c "(0, 0, 255)" -o 'bus' 'truck'
+python3 person_blocker.py -i images/img3.jpg -c "(0, 255, 255)" -o 'bus' 'truck'
 ```
 
 ## License

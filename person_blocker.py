@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import numpy as np
 import coco
@@ -7,6 +8,7 @@ import model as modellib
 from classes import get_class_names, InferenceConfig
 from ast import literal_eval as make_tuple
 import imageio
+import visualize
 
 # Creates a color layer and adds Gaussian noise.
 # For each pixel, the same noise value is added to each channel
@@ -64,6 +66,14 @@ def person_blocker(args):
     results = model.detect([image], verbose=0)
     r = results[0]
 
+    if args.labeled:
+        position_ids = ['[{}]'.format(x)
+                        for x in range(r['class_ids'].shape[0])]
+        visualize.display_instances(image, r['rois'],
+                                    r['masks'], r['class_ids'],
+                                    get_class_names(), position_ids)
+        sys.exit()
+
     # Filter masks to only the selected objects
     selected_class_ids = np.flatnonzero(np.in1d(get_class_names(),
                                                 np.array(args.objects)))
@@ -109,6 +119,10 @@ if __name__ == '__main__':
     parser.add_argument('-c',
                         '--color', nargs='?', default='(255, 255, 255)',
                         help='Color of the "block"')
-
+    parser.add_argument('-l',
+                        '--labeled', dest='labeled',
+                        action='store_true',
+                        help='Generate labeled image instead')
+    parser.set_defaults(labeled=False)
     args = parser.parse_args()
     person_blocker(args)
