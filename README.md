@@ -22,6 +22,17 @@ python3 person_blocker.py -i images/img2.jpg -c '#c0392b' -o 'horse'
 python3 person_blocker.py -i images/img3.jpg -c "(0, 255, 255)" -o 'bus' 'truck'
 ```
 
+Blocking specific object(s) requires 2 steps: running in inference mode to get the object IDs for each object, and then blocking those object IDs.
+
+```shell
+python3 person_blocker.py -i images/img4.jpg -l
+```
+
+```shell
+python3 person_blocker.py -i images/img4.jpg -o 0 1
+```
+
+
 ## License
 
 MIT

@@ -75,10 +75,18 @@ def person_blocker(args):
         sys.exit()
 
     # Filter masks to only the selected objects
-    selected_class_ids = np.flatnonzero(np.in1d(get_class_names(),
-                                                np.array(args.objects)))
-    object_indices = np.flatnonzero(
-        np.in1d(r['class_ids'], selected_class_ids))
+    objects = np.array(args.objects)
+
+    # Object IDs:
+    if np.all(np.chararray.isnumeric(objects)):
+        object_indices = objects.astype(int)
+    # Types of objects:
+    else:
+        selected_class_ids = np.flatnonzero(np.in1d(get_class_names(),
+                                                    objects))
+        object_indices = np.flatnonzero(
+            np.in1d(r['class_ids'], selected_class_ids))
+
     mask_selected = np.sum(r['masks'][:, :, object_indices], axis=2)
 
     # Replace object masks with noise
@@ -114,7 +122,7 @@ if __name__ == '__main__':
         '-m', '--model',  help='Path to COCO model', default='/')
     parser.add_argument('-o',
                         '--objects', nargs='+',
-                        help='Object(s) to block',
+                        help='Object(s)/Object ID(s) to block',
                         default='person')
     parser.add_argument('-c',
                         '--color', nargs='?', default='(255, 255, 255)',
