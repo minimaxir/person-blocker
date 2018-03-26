@@ -45,11 +45,12 @@ def string_to_rgb_triplet(triplet):
 
 
 def person_blocker(args):
-    COCO_MODEL_PATH = args.model
 
     # Required to load model, but otherwise unused
     ROOT_DIR = os.getcwd()
-    MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+    COCO_MODEL_PATH = args.model or os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+
+    MODEL_DIR = os.path.join(ROOT_DIR, "logs")  # Required to load model
 
     if not os.path.exists(COCO_MODEL_PATH):
         utils.download_trained_weights(COCO_MODEL_PATH)
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--image',  help='Image file name.',
                         required=False)
     parser.add_argument(
-        '-m', '--model',  help='path to COCO model', default='/')
+        '-m', '--model',  help='path to COCO model', default=None)
     parser.add_argument('-o',
                         '--objects', nargs='+',
                         help='object(s)/object ID(s) to block. ' +
