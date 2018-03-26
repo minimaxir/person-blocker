@@ -117,20 +117,31 @@ if __name__ == '__main__':
         description='Person Blocker - Automatically "block" people '
                     'in images using a neural network.')
     parser.add_argument('-i', '--image',  help='Image file name.',
-                        required=True)
+                        required=False)
     parser.add_argument(
-        '-m', '--model',  help='Path to COCO model', default='/')
+        '-m', '--model',  help='path to COCO model', default='/')
     parser.add_argument('-o',
                         '--objects', nargs='+',
-                        help='Object(s)/Object ID(s) to block',
+                        help='object(s)/object ID(s) to block. ' +
+                        'Use the -names flag to print a list of ' +
+                        'valid objects',
                         default='person')
     parser.add_argument('-c',
                         '--color', nargs='?', default='(255, 255, 255)',
-                        help='Color of the "block"')
+                        help='color of the "block"')
     parser.add_argument('-l',
                         '--labeled', dest='labeled',
                         action='store_true',
-                        help='Generate labeled image instead')
-    parser.set_defaults(labeled=False)
+                        help='generate labeled image instead')
+    parser.add_argument('-n',
+                        '--names', dest='names',
+                        action='store_true',
+                        help='prints class names and exits.')
+    parser.set_defaults(labeled=False, names=False)
     args = parser.parse_args()
+
+    if args.names:
+        print(get_class_names())
+        sys.exit()
+
     person_blocker(args)
