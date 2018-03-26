@@ -15,7 +15,7 @@ python3 person_blocker.py -i images/img1.jpg
 ```
 
 ```shell
-python3 person_blocker.py -i images/img2.jpg -c '#c0392b' -o 'horse'
+python3 person_blocker.py -i images/img2.jpg -c '#c0392b' -o 'giraffe'
 ```
 
 ```shell
