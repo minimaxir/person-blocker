@@ -11,8 +11,6 @@ import imageio
 import visualize
 import face_recognition
 from pathlib import Path
-import cv2
-
 
 # Creates a color layer and adds Gaussian noise.
 # For each pixel, the same noise value is added to each channel
@@ -62,9 +60,7 @@ def faceRecog(orig_img, known_face_encodings):
     face_locations = []
     face_encodings = []
     face_names = []
-    #scale down to 1/4 to make it quicker
-    img = cv2.resize(orig_img, (0, 0), fx=0.25, fy=0.25)
-    img = img[:, :, ::-1]
+    img = orig_img[:, :, ::-1]
 
     face_locations = face_recognition.face_locations(img)
     face_encodings = face_recognition.face_encodings(img, face_locations)
@@ -78,11 +74,6 @@ def faceRecog(orig_img, known_face_encodings):
     res = []
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         if name == "Hit":
-            # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-            top *= 4
-            right *= 4
-            bottom *= 4
-            left *= 4
             x1 = left
             y1 = top
             x2 = right
@@ -144,6 +135,10 @@ def person_blocker(args):
 
     # Filter masks to only the selected objects
     if args.facerecog:
+        #that face was not found in the image so dont do anything
+        if len(tmp_objects) == 0:
+            imageio.imwrite('person_blocked.png', image)
+            return
         objects = np.array(tmp_objects)
     else:
         objects = np.array(args.objects)
