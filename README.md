@@ -6,6 +6,16 @@ A script to automatically "block" people in images (like the [Black Mirror](http
 
 But you can block more than just people: up to [80 different types](https://github.com/minimaxir/person-blocker/blob/master/classes.py) of objects can be blocked, including giraffes and busses!
 
+## Setup
+
+This project relies on a handful of dependencies, use the following command to install your dependencies:
+
+```shell
+pip3 install -r requirements.txt
+```
+
+_Note_: Depending on your environment, you may need to use `sudo`. You may also want to use virtualenv.
+
 ## Usage
 
 Person Blocker is used from the command line:
