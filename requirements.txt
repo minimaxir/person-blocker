@@ -2,7 +2,6 @@ h5py
 imageio
 ipython
 keras
-numpy
 scipy
 scikit-image
 tensorflow
