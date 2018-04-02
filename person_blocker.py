@@ -9,6 +9,8 @@ from classes import get_class_names, InferenceConfig
 from ast import literal_eval as make_tuple
 import imageio
 import visualize
+import face_recognition
+from pathlib import Path
 
 # Creates a color layer and adds Gaussian noise.
 # For each pixel, the same noise value is added to each channel
@@ -44,6 +46,42 @@ def string_to_rgb_triplet(triplet):
         return triplet
 
 
+def loadKnown(pathstr):
+    known_face_encodings = []
+    pathlist = Path(pathstr).glob('**/*.jpg')
+    for p in pathlist:
+        p_str = str(p)
+        im = face_recognition.load_image_file(p_str)
+        encoding = face_recognition.face_encodings(im)[0]
+        known_face_encodings.append(encoding)
+    return known_face_encodings
+
+def faceRecog(orig_img, known_face_encodings):
+    face_locations = []
+    face_encodings = []
+    face_names = []
+    img = orig_img[:, :, ::-1]
+
+    face_locations = face_recognition.face_locations(img)
+    face_encodings = face_recognition.face_encodings(img, face_locations)
+    for face_encoding in face_encodings:
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        name = "Unknown"
+        if True in matches:
+            name = "Hit"
+        face_names.append(name)
+
+    res = []
+    for (top, right, bottom, left), name in zip(face_locations, face_names):
+        if name == "Hit":
+            x1 = left
+            y1 = top
+            x2 = right
+            y2 = bottom
+            res.append([x1, y1, x2, y2])
+    return res
+
+
 def person_blocker(args):
 
     # Required to load model, but otherwise unused
@@ -66,6 +104,26 @@ def person_blocker(args):
     # Create masks for all objects
     results = model.detect([image], verbose=0)
     r = results[0]
+    
+    # Do Face Recognition and get the Object ID
+    if args.facerecog:
+        if not args.known_path:
+            print('No known path specified')
+            sys.exit()
+        known_face_encodings = loadKnown(args.known_path)
+        detected_face_locations = faceRecog(image, known_face_encodings)
+        rois = r['rois']
+        tmp_objects = []
+        for face_loc in detected_face_locations:
+            for i,ri in enumerate(rois):
+                x1 = ri[1]
+                y1 = ri[0]
+                x2 = ri[3]
+                y2 = ri[2]
+                #check if the face boundaries are within the boundary of the rois
+                if face_loc[0] >= x1 and face_loc[1] <= x2 and face_loc[2] >= x1 and face_loc[2] <= x2:
+                    if face_loc[1] >= y1 and face_loc[1] <= y2 and face_loc[3] >= y1 and face_loc[3] <= y2:
+                        tmp_objects.append(str(i))
 
     if args.labeled:
         position_ids = ['[{}]'.format(x)
@@ -76,7 +134,15 @@ def person_blocker(args):
         sys.exit()
 
     # Filter masks to only the selected objects
-    objects = np.array(args.objects)
+    if args.facerecog:
+        #that face was not found in the image so dont do anything
+        if len(tmp_objects) == 0:
+            imageio.imwrite('person_blocked.png', image)
+            return
+        objects = np.array(tmp_objects)
+    else:
+        objects = np.array(args.objects)
+    
 
     # Object IDs:
     if np.all(np.chararray.isnumeric(objects)):
@@ -111,6 +177,7 @@ def person_blocker(args):
         images.append(new_image)
 
     imageio.mimsave('person_blocked.gif', images, fps=30., subrectangles=True)
+    
 
 
 if __name__ == '__main__':
@@ -138,6 +205,13 @@ if __name__ == '__main__':
                         '--names', dest='names',
                         action='store_true',
                         help='prints class names and exits.')
+    parser.add_argument('-f',
+                        '--facerecog', dest='facerecog',
+                        action='store_true',
+                        help='Does face recognition')
+    parser.add_argument('-k',
+                        '--known', dest='known_path',
+                        help='Path to known images', required=False)
     parser.set_defaults(labeled=False, names=False)
     args = parser.parse_args()
 
