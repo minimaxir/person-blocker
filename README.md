@@ -4,17 +4,17 @@
 
 A script to automatically "block" people in images (like the [Black Mirror](https://en.wikipedia.org/wiki/Black_Mirror) episode [White Christmas](https://en.wikipedia.org/wiki/White_Christmas_(Black_Mirror))) using [Mask R-CNN](https://github.com/matterport/Mask_RCNN) pretrained on the [MS COCO](https://arxiv.org/abs/1405.0312) dataset. No GPU required!
 
-But you can block more than just people: up to [80 different types](https://github.com/minimaxir/person-blocker/blob/master/classes.py) of objects can be blocked, including giraffes and busses!
+Capable of blocking more than just people: up to [80 different types](https://github.com/minimaxir/person-blocker/blob/master/classes.py) of objects can be blocked, including giraffes and busses!
 
 ## Setup
 
-This project relies on a handful of dependencies, use the following command to install your dependencies:
+This project relies on some dependencies. Use the command below to install the dependencies:
 
 ```shell
 pip3 install -r requirements.txt
 ```
 
-_Note_: Depending on your environment, you may need to use `sudo`. You may also want to use virtualenv.
+_Note_: Depending on the environment, you may need to use `sudo` or virtualenv.
 
 ## Usage
 
@@ -22,10 +22,9 @@ Person Blocker is used from the command line:
 
 ```shell
 python3 person_blocker.py -i images/img3.jpg -c '(128, 128, 128)' -o 'bus' 'truck'
-```
 
 * `-i/--image`: specifies the image file.
-* `-m/--model`: path to the pretrained COCO model weights (default: current directory): if not specified, it will download them automatically to the current directory if not already present (note: the weights are 258 MB!)
+* `-m/--model`: path to the pretrained COCO model weights (default: current directory): If a path is not specified and the file doesn't exist in the current directory, the file containing the pretrained COCO model weights will be downloaded. (note: the weights are 258 MB!)
 * `-c/--color`: color of the mask, in either quote-wrapped hexidecimal or 3-element RGB tuple format. (default: white)
 * `-o/--object`: list of types of objects to block (or object IDs of specific objects). You can see the allowable choices of objects to block in `classes.py` or by using the `-names` flag. (default: person)
 * `-l/--labeled`: saves a labeled image annotated with detected objects and their object ID.
