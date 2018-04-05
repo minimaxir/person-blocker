@@ -22,10 +22,9 @@ Person Blocker is used from the command line:
 
 ```shell
 python3 person_blocker.py -i images/img3.jpg -c '(128, 128, 128)' -o 'bus' 'truck'
-```
 
 * `-i/--image`: specifies the image file.
-* `-m/--model`: path to the pretrained COCO model weights (default: current directory): if not specified, the software will download the paths automatically to the current directory if not present (note: the weights are 258 MB!)
+* `-m/--model`: path to the pretrained COCO model weights (default: current directory): If a path is not specified and the file doesn't exist in the current directory, the file containing the pretrained COCO model weights will be downloaded. (note: the weights are 258 MB!)
 * `-c/--color`: color of the mask, in either quote-wrapped hexidecimal or 3-element RGB tuple format. (default: white)
 * `-o/--object`: list of types of objects to block (or object IDs of specific objects). You can see the allowable choices of objects to block in `classes.py` or by using the `-names` flag. (default: person)
 * `-l/--labeled`: saves a labeled image annotated with detected objects and their object ID.
