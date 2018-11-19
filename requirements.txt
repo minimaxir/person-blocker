@@ -1,7 +1,7 @@
+tensorflow
+keras==2.1.6
 h5py
 imageio
 ipython
-keras
 scipy
 scikit-image
-tensorflow
